@@ -7,7 +7,12 @@ import MessageBox from "./MessageBox";
 
 export default class Chat extends React.Component {
   state = { messages: [] };
+  // use this function to replace the username implementation
+  generateID() {
+    this.id = "_" + Math.random().toString(36).substr(2, 9);
+  }
   componentDidMount() {
+    this.generateID();
     const END_POINT = "localhost:8000/";
     this.socket = new WebSocket("ws://" + END_POINT + "ws/chat/lobby/");
     this.socket.onmessage = this.receiveMessage;
@@ -19,12 +24,17 @@ export default class Chat extends React.Component {
   receiveMessage = (e) => {
     const data = JSON.parse(e.data);
     const messages = this.state.messages;
-    messages.push(data.message);
+    let incoming = false;
+    if (this.id !== data.message.substr(0, 10)) {
+      incoming = true;
+    }
+    messages.push({ message: data.message.substr(10), incoming });
     this.setState({ messages: messages });
+    console.log(messages);
   };
 
   sendMessage = (message) => {
-    this.socket.send(JSON.stringify({ message }));
+    this.socket.send(JSON.stringify({ message: this.id + message }));
   };
 
   render() {
