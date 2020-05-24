@@ -30,7 +30,6 @@ export default class Chat extends React.Component {
     }
     messages.push({ message: data.message.substr(10), incoming });
     this.setState({ messages: messages });
-    console.log(messages);
   };
 
   sendMessage = (message) => {
@@ -45,7 +44,7 @@ export default class Chat extends React.Component {
           <div className="inbox_msg">
             <People />
             <div className="mesgs">
-              <History />
+              <History messages={this.state.messages} />
               <MessageBox sendMessage={this.sendMessage} />
             </div>
           </div>
